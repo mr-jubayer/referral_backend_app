@@ -28,7 +28,7 @@ const userSchema = new Schema(
       required: [true, "Referral code is required"],
       trim: true,
     },
-    referralBy: {
+    referredBy: {
       type: String,
     },
     wallet: {
