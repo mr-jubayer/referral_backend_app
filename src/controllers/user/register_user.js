@@ -1,3 +1,4 @@
+import { Refer } from "../../models/refer.model.js";
 import { User } from "../../models/user.model.js";
 import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
@@ -30,8 +31,18 @@ const registerUser = asyncHandler(async (req, res) => {
     }
   }
 
-  const referralCode = `${username}${Math.round(Math.random() * 50000).toFixed(
-    2
+  if (referredBy) {
+    const isExistReferredCode = await User.findOne({
+      referralCode: referredBy,
+    });
+
+    if (!isExistReferredCode) {
+      throw new ApiError(404, `Referred code '${referredBy}' isn't available`);
+    }
+  }
+
+  const referralCode = `${username.toUpperCase()}${Math.round(
+    Math.random() * 80
   )}`;
 
   const user = await User.create({
@@ -40,8 +51,15 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     email: email || null,
     referralCode,
-    referralBy: referredBy || null,
+    referredBy: referredBy || null,
   });
+
+  if (referredBy) {
+    await Refer.create({
+      referredBy,
+      referredUserId: user._id,
+    });
+  }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id

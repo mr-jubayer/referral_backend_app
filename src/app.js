@@ -7,13 +7,13 @@ app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(express.static("public"));
 
 //routes import
+import depositRoute from "./routes/deposit.route.js";
 import healthCheckRouter from "./routes/healthcheck.route.js";
-import referRouter from "./routes/refer_link.route.js";
 import userRouter from "./routes/user.route.js";
 
 //routes declaration
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
-app.use("/ref", referRouter);
+app.use("/api/v1/deposit", depositRoute);
 
 export { app };
