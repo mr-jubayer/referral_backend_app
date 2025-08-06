@@ -1,10 +1,6 @@
 import { z } from "zod";
 
 export const createDepositValidationSchema = z.object({
-  userId: z
-    .string({ required_error: "User ID is required" })
-    .min(1, { message: "User ID cannot be empty" }),
-
   amount: z
     .number({ required_error: "Amount is required" })
     .min(1, { message: "Amount must be greater than 0" }),
