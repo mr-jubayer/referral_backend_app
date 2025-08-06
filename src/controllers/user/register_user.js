@@ -54,10 +54,12 @@ const registerUser = asyncHandler(async (req, res) => {
     referredBy: referredBy || null,
   });
 
-  await Refer.create({
-    referredBy,
-    referredUserId: user._id,
-  });
+  if (referredBy) {
+    await Refer.create({
+      referredBy,
+      referredUserId: user._id,
+    });
+  }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id

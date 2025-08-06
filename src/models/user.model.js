@@ -25,14 +25,13 @@ const userSchema = new Schema(
     },
     referralCode: {
       type: String,
-      required: [true, "Referral code is required"],
-      trim: true,
     },
     referredBy: {
       type: String,
     },
     wallet: {
-      balance: { type: Number, default: 0 },
+      mainBalance: { type: Number, default: 0 },
+      bonusBalance: { type: Number, default: 0 },
       totalEarned: { type: Number, default: 0 },
       totalWithdrawn: { type: Number, default: 0 },
     },
