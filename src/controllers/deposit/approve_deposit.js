@@ -78,14 +78,17 @@ const approveDeposit = asyncHandler(async (req, res) => {
 export { approveDeposit };
 
 const distributeFiveLevelBonus = async (user) => {
+  // Find referred user
   let currentUser = await User.findOne({ referralCode: user.referredBy });
   let bonus = [200, 100, 50, 20, 20];
 
   for (let r = 0; r < 5; r++) {
+    // assign bonus and update it
     currentUser.wallet.bonusBalance += bonus[r];
     await currentUser.save();
     // console.log(currentUser.username, currentUser.referredBy);
 
+    // Next next level user. 5 -> 4 -> 3 -> 2 -> 1 -> break
     currentUser = await User.findOne({ referralCode: currentUser.referredBy });
   }
 };
