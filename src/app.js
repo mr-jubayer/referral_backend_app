@@ -10,10 +10,12 @@ app.use(express.static("public"));
 import depositRoute from "./routes/deposit.route.js";
 import healthCheckRouter from "./routes/healthcheck.route.js";
 import userRouter from "./routes/user.route.js";
+import withdrawRoute from "./routes/withdraw.route.js";
 
 //routes declaration
 app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/deposit", depositRoute);
+app.use("/api/v1/withdraw", withdrawRoute);
 
 export { app };

@@ -31,6 +31,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
+      default: "user",
     },
     wallet: {
       mainBalance: { type: Number, default: 0 },

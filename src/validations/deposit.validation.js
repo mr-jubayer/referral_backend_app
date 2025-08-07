@@ -5,8 +5,6 @@ export const depositRequestValidationSchema = z.object({
     .number({ required_error: "Amount is required" })
     .min(1, { message: "Amount must be greater than 0" }),
 
-  status: z.enum(["pending", "declined", "approved"]).optional(),
-
   method: z.enum(["bkash", "nagod"], {
     required_error: "Payment method is required",
   }),
