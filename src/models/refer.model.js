@@ -12,10 +12,6 @@ const referSchema = new Schema(
       ref: "User",
       required: true,
     },
-    bonusAmount: {
-      type: Number,
-      default: 0,
-    },
     isBonusGiven: {
       type: Boolean,
       default: false,

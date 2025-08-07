@@ -29,6 +29,10 @@ const userSchema = new Schema(
     referredBy: {
       type: String,
     },
+    role: {
+      type: String,
+      default: "user",
+    },
     wallet: {
       mainBalance: { type: Number, default: 0 },
       bonusBalance: { type: Number, default: 0 },

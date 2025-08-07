@@ -41,9 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
   }
 
-  const referralCode = `${username.toUpperCase()}${Math.round(
-    Math.random() * 80
-  )}`;
+  const referralCode = `${username}${Math.round(Math.random() * 80)}`;
 
   const user = await User.create({
     username: username.toLowerCase(),
@@ -51,6 +49,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     email: email || null,
     referralCode,
+    role: "user",
     referredBy: referredBy || null,
   });
 

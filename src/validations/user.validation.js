@@ -8,7 +8,7 @@ const createUserValidationSchema = z.object({
     .string({ message: "Phone is required" })
     .regex(
       validatePhoneNumber,
-      "Invalid Bangladeshi phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
+      "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
     )
     .optional(),
   password: z

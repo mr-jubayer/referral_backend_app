@@ -4,7 +4,7 @@ import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
-const createDeposit = asyncHandler(async (req, res) => {
+const depositRequest = asyncHandler(async (req, res) => {
   const { amount, method, transitionId } = req.body;
   const userId = req.user._id;
 
@@ -23,7 +23,7 @@ const createDeposit = asyncHandler(async (req, res) => {
   const newDeposit = await Deposit.create({
     userId,
     amount,
-    status: "pending", // force set
+    status: "pending",
     method,
     transitionId,
   });
@@ -39,4 +39,4 @@ const createDeposit = asyncHandler(async (req, res) => {
   );
 });
 
-export { createDeposit };
+export { depositRequest };
