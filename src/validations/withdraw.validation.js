@@ -8,7 +8,7 @@ export const withdrawRequestValidationSchema = z.object({
     .min(100, { message: "Amount must be greater than 100" }),
 
   phone: z
-    .number({ required_error: "Phone Number is required" })
+    .string({ message: "Phone is required" })
     .regex(
       validatePhoneNumber,
       "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."

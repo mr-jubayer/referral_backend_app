@@ -1,6 +1,7 @@
 import express from "express";
-import { withdrawRequest } from "../controllers/withdraw/withdraw_request";
-import { withdrawRequestValidation } from "../validations/withdraw.validation";
+import { withdrawRequest } from "../controllers/withdraw/withdraw_request.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { withdrawRequestValidation } from "../validations/withdraw.validation.js";
 
 const router = express.Router();
 
