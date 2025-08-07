@@ -7,8 +7,10 @@ import { asyncHandler } from "../../utils/asyncHandler.js";
 
 const approveDeposit = asyncHandler(async (req, res) => {
   const { transitionId } = req.body;
+  // req.user <- data coming by jwt verified data's
   const adminId = req.user._id;
 
+  // Admin only access this route
   const isAdmin = await User.findById(adminId);
   if (!isAdmin || isAdmin.role !== "admin") {
     throw new ApiError(403, "Access denied. Admin only.");
@@ -26,14 +28,17 @@ const approveDeposit = asyncHandler(async (req, res) => {
     );
   }
 
+  // find user by id from depositTransition
   let user = await User.findById(depositTransition.userId);
   if (!user) {
     throw new ApiError(404, "User not found or may removed");
   }
 
+  // If user user any refer code
   if (user?.referredBy) {
     const referralInfo = await Refer.findOne({ referredBy: user.referredBy });
 
+    // If referral bonus is not given or User if depositing first time
     if (!referralInfo.isBonusGiven) {
       await distributeFiveLevelBonus(user);
       referralInfo.isBonusGiven = true;
@@ -44,14 +49,17 @@ const approveDeposit = asyncHandler(async (req, res) => {
       await addDepositMoney();
     }
   } else {
+    // user haven't used any refer code
     await addDepositMoney();
   }
 
+  // confirm deposit and add money in user account
   async function addDepositMoney() {
     user.wallet.mainBalance += depositTransition.amount;
     await user.save();
   }
 
+  // change status
   depositTransition.status = "approved";
   await depositTransition.save();
 
