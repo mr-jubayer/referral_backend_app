@@ -12,6 +12,7 @@ const depositRequest = asyncHandler(async (req, res) => {
   if (!user) {
     throw new ApiError(403, "User not found or unauthorized");
   }
+
   const checkTransition = await Deposit.findOne({ transitionId });
   if (checkTransition) {
     throw new ApiError(
@@ -20,6 +21,7 @@ const depositRequest = asyncHandler(async (req, res) => {
     );
   }
 
+  // Minimum amount 500
   const newDeposit = await Deposit.create({
     userId,
     amount,

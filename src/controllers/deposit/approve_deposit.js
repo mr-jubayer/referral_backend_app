@@ -84,7 +84,7 @@ const distributeFiveLevelBonus = async (user) => {
 
   for (let r = 0; r < 5; r++) {
     // assign bonus and update it
-    currentUser.wallet.bonusBalance += bonus[r];
+    currentUser.wallet.mainBalance += bonus[r];
     await currentUser.save();
     // console.log(currentUser.username, currentUser.referredBy);
 

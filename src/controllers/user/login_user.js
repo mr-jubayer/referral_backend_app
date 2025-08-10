@@ -17,36 +17,35 @@ export const generateAccessAndRefreshTokens = async (userId) => {
 };
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { phone, email, username, password } = req.body;
+  const { phone, email, password } = req.body;
 
   if (!password) throw new ApiError(400, "Password is required");
 
-  if (
-    (phone && email && username) ||
-    (phone && email) ||
-    (phone && username) ||
-    (username && email)
-  ) {
-    throw new ApiError(404, "You must user way");
+  if (!phone && !email) {
+    throw new ApiError(400, "Either phone or email must be provided");
+  }
+
+  if (phone && email) {
+    throw new ApiError(400, "Please provide either phone or email, not both");
   }
 
   let user;
 
-  if (username) {
-    user = await User.findOne({ username });
-    checkError(user, "Username doesn't exist.");
-  } else if (email) {
-    user = await User.findOne({ email });
-    checkError(user, "Email doesn't exist.");
-  } else {
-    user = await User.findOne({ phone });
-    checkError(user, "Phone number doesn't exist.");
-  }
+  if (email) {
+    user = await User.findOne({
+      emails: { $elemMatch: { email: email } },
+    });
+    if (!user) throw new ApiError(404, "Email doesn't exist.");
 
-  function checkError(user, message) {
-    if (!user) {
-      throw new ApiError(404, message);
-    }
+    //  check if email not verified
+    user.emails?.forEach((em) => {
+      if (em.email === email && !em.isVerified) {
+        throw new ApiError(404, "Email Not verified. verify it and try again");
+      }
+    });
+  } else if (phone) {
+    user = await User.findOne({ phones: phone });
+    if (!user) throw new ApiError(404, "Phone number doesn't exist.");
   }
 
   const isPasswordValid = await user.isPasswordCorrect(password);
