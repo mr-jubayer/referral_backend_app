@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.use(verifyJWT);
 router.route("/request").post(depositRequestValidation, depositRequest);
-router.route("/approve").post(approveDepositValidation, approveDeposit);
+router.route("/approve").patch(approveDepositValidation, approveDeposit);
 
 export default router;

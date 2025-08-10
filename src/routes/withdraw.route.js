@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.use(verifyJWT);
 router.route("/request").post(withdrawRequestValidation, withdrawRequest);
-router.route("/approve").post(approveWithdrawValidation, approveWithdraw);
+router.route("/approve").patch(approveWithdrawValidation, approveWithdraw);
 
 export default router;
 

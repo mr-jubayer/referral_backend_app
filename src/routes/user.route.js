@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.route("/register").post(createUserValidation, registerUser);
 router.route("/login").post(loginUserValidation, loginUser);
-router.route("/add-email").post(verifyJWT, addEmailValidation, addEmail);
-router.route("/add-phone").post(verifyJWT, addPhoneValidation, addPhone);
+router.route("/add-email").patch(verifyJWT, addEmailValidation, addEmail);
+router.route("/add-phone").patch(verifyJWT, addPhoneValidation, addPhone);
 
 export default router;
