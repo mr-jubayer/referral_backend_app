@@ -3,6 +3,8 @@ import { z } from "zod";
 const validatePhoneNumber = /^(?:(?:\+|00)88|01)?\d{11}$/;
 
 export const withdrawRequestValidationSchema = z.object({
+  userId: z.string({ message: "userId field is required" }),
+
   amount: z
     .number({ required_error: "Amount is required" })
     .min(100, { message: "Amount must be greater than 100" }),

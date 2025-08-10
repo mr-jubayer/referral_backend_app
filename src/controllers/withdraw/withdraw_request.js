@@ -5,10 +5,14 @@ import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
 const withdrawRequest = asyncHandler(async (req, res) => {
-  const { amount, phone, method } = req.body;
-  const userId = req.user._id;
+  const { amount, phone, method, userId } = req.body;
+  const _id = req.user._id;
 
-  const user = await User.findById(userId);
+  if (!_id.equals(userId)) {
+    throw new ApiError(400, "User id not matched");
+  }
+
+  const user = await User.findById(_id);
 
   if (!user) {
     throw new ApiError(403, "User Not Found");
