@@ -18,6 +18,11 @@ export const withdrawRequestValidationSchema = z.object({
   }),
 });
 
+export const approveWithdrawValidationSchema = z.object({
+  userId: z.string({ message: "withdraw " }),
+  withdrawId: z.string({ message: "withdraw " }),
+});
+
 const withdrawRequestValidation = async (req, res, next) => {
   try {
     req.body = withdrawRequestValidationSchema.parse(req.body);
@@ -30,5 +35,17 @@ const withdrawRequestValidation = async (req, res, next) => {
     });
   }
 };
+const approveWithdrawValidation = async (req, res, next) => {
+  try {
+    req.body = approveWithdrawValidationSchema.parse(req.body);
+    next();
+  } catch (error) {
+    const result = approveWithdrawValidationSchema.safeParse(req.body);
+    res.status(400).json({
+      status: 400,
+      errors: result.error,
+    });
+  }
+};
 
-export { withdrawRequestValidation };
+export { approveWithdrawValidation, withdrawRequestValidation };

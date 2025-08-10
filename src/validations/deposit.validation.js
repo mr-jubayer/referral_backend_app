@@ -3,7 +3,7 @@ import { z } from "zod";
 export const depositRequestValidationSchema = z.object({
   amount: z
     .number({ required_error: "Amount is required" })
-    .min(1, { message: "Amount must be greater than 0" }),
+    .min(500, { message: "Amount must be greater than or equal 500" }),
 
   method: z.enum(["bkash", "nagod"], {
     required_error: "Payment method is required",

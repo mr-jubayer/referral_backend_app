@@ -14,18 +14,53 @@ const withdrawRequest = asyncHandler(async (req, res) => {
     throw new ApiError(403, "User Not Found");
   }
 
-  if (user.bonusBalance < amount) {
+  const remainBalance = user.wallet.mainBalance - amount;
+  const withdrawalBalance = user.wallet.mainBalance - 500;
+
+  if (!(remainBalance >= 500)) {
     throw new ApiError(400, "Insufficient balance");
   }
 
-  const recentRequest = await Withdraw.findOne({
-    userId,
-    createdAt: { $gt: new Date(Date.now() - 5 * 60 * 1000) }, // last 5 mins
-  });
-
-  if (recentRequest) {
-    throw new ApiError(429, "Please wait before making another withdrawal");
+  if (!(withdrawalBalance >= amount)) {
+    throw new ApiError(400, "Insufficient balance");
   }
+
+  const todayTotalWithdrawn = await Withdraw.aggregate([
+    {
+      $match: {
+        userId,
+        createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // last 24 hour history
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        totalWithdrawn: { $sum: "$amount" },
+      },
+    },
+  ]);
+
+  const totalWithdrawn =
+    todayTotalWithdrawn.length > 0 ? todayTotalWithdrawn[0].totalWithdrawn : 0;
+
+  if (totalWithdrawn + amount >= 10000) {
+    throw new ApiError(
+      403,
+      "Today withdraw request limit exceeded. Try again after 24 hours"
+    );
+  }
+
+  // const recentRequest = await Withdraw.findOne({
+  //   userId,
+  //   createdAt: { $gt: new Date(Date.now() - 5 * 60 * 1000) }, // last 5 mins
+  // });
+
+  // if (recentRequest) {
+  //   throw new ApiError(
+  //     429,
+  //     "Please wait 5 minute before making another withdrawal"
+  //   );
+  // }
 
   const newWithdrawal = await Withdraw.create({
     userId,
@@ -34,7 +69,7 @@ const withdrawRequest = asyncHandler(async (req, res) => {
     method,
   });
 
-  user.wallet.bonusBalance -= amount;
+  user.wallet.mainBalance -= amount;
   await user.save();
 
   return res.status(201).json(

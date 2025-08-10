@@ -10,19 +10,29 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-    phone: {
-      type: String,
-      trim: true,
+    phones: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      validate: [arrayLimit, "{PATH} exceeds the limit of 3"],
+    },
+    emails: {
+      type: [
+        {
+          email: { type: String, lowercase: true, trim: true, required: true },
+          isVerified: { type: Boolean, default: false },
+        },
+      ],
+      validate: [arrayLimit, "{PATH} exceeds the limit of 3"],
     },
     password: {
       type: String,
       required: [true, "Password is required"],
     },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-    },
+
     referralCode: {
       type: String,
     },
@@ -35,7 +45,6 @@ const userSchema = new Schema(
     },
     wallet: {
       mainBalance: { type: Number, default: 0 },
-      bonusBalance: { type: Number, default: 0 },
       totalEarned: { type: Number, default: 0 },
       totalWithdrawn: { type: Number, default: 0 },
     },
@@ -44,6 +53,10 @@ const userSchema = new Schema(
     timestamps: true,
   }
 );
+
+function arrayLimit(val) {
+  return val.length <= 3;
+}
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();

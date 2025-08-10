@@ -8,20 +8,16 @@ import { generateAccessAndRefreshTokens } from "./login_user.js";
 const registerUser = asyncHandler(async (req, res) => {
   const { username, phone, email, password, referredBy } = req.body;
 
-  if (email && phone) {
-    throw new ApiError(400, "Cannot read email and phone number at a time!");
-  }
-
   let existedUser;
 
   if (username) {
     existedUser = await User.findOne({ username });
     checkError(existedUser, "User with the same username already exists.");
   } else if (email) {
-    existedUser = await User.findOne({ email });
+    existedUser = await User.findOne({ emails: email });
     checkError(existedUser, "User with the same email already exists.");
   } else {
-    existedUser = await User.findOne({ phone });
+    existedUser = await User.findOne({ phones: phone });
     checkError(existedUser, "User with the same phone number already exists.");
   }
 
@@ -45,9 +41,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     username: username.toLowerCase(),
-    phone: phone || null,
+    phones: [phone],
     password,
-    email: email || null,
+    emails: [{ email }],
     referralCode,
     role: "user",
     referredBy: referredBy || null,
