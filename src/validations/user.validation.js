@@ -83,7 +83,7 @@ const addPhoneValidation = async (req, res, next) => {
 };
 
 const addEmailSchema = z.object({
-  email: z.string({ message: "User email is required." }).email().optional(),
+  email: z.string({ message: "User email is required." }).email(),
 });
 const addPhoneSchema = z.object({
   phone: z
@@ -91,8 +91,7 @@ const addPhoneSchema = z.object({
     .regex(
       validatePhoneNumber,
       "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
-    )
-    .optional(),
+    ),
 });
 
 export {

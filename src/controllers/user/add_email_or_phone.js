@@ -1,4 +1,5 @@
 import { User } from "../../models/user.model.js";
+import { ApiError } from "../../utils/ApiError.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
@@ -10,8 +11,15 @@ const addEmail = asyncHandler(async (req, res) => {
 
   if (!user) throw new ApiError(404, "User doesn't exist.");
 
+  user.emails?.forEach((emailObj) => {
+    if (emailObj.email === email) {
+      throw new ApiError(404, "Email Already exist");
+    }
+  });
+
   user.emails.push({ email, isVerified: false });
-  // verify the email
+
+  // TODO: verify the email
 
   return res
     .status(201)
@@ -24,9 +32,16 @@ const addPhone = asyncHandler(async (req, res) => {
 
   const user = await User.findById(userId);
 
+  user.phones?.forEach((ph) => {
+    if (ph === phone) {
+      throw new ApiError(404, "Phone Already exist");
+    }
+  });
+
   if (!user) throw new ApiError(404, "User doesn't exist.");
 
-  user.phones.push({ phone, isVerified: false });
+  user.phones.push(phone);
+  await user.save();
 
   return res
     .status(201)

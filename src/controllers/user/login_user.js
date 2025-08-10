@@ -36,6 +36,8 @@ const loginUser = asyncHandler(async (req, res) => {
       emails: { $elemMatch: { email: email } },
     });
     if (!user) throw new ApiError(404, "Email doesn't exist.");
+    if (!user.emails[email]["isVerified"])
+      throw new ApiError(404, "Email Not verified. verify it and try again");
   } else if (phone) {
     user = await User.findOne({ phones: phone });
     if (!user) throw new ApiError(404, "Phone number doesn't exist.");
