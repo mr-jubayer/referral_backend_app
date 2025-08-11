@@ -1,24 +1,16 @@
 import mongoose from "mongoose";
 
-const betSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  amount: Number,
-  color: { type: String, enum: ["red", "green"] },
-  isDemo: Boolean,
-});
-
 const roundSchema = new mongoose.Schema(
   {
-    roundId: String,
-    bets: [betSchema],
+    roundId: { type: Number, required: true, unique: true },
     status: {
       type: String,
-      enum: ["OPEN", "CLOSED", "RESULT"],
-      default: "OPEN",
+      enum: ["open", "closed", "completed"],
+      default: "open",
     },
-    realWinner: String,
-    demoWinner: String,
-    endTime: Date,
+    winner: { type: String, enum: ["red", "green", null], default: null },
+    startedAt: Date,
+    endedAt: Date,
   },
   { timestamps: true }
 );
