@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const roundSchema = new mongoose.Schema(
   {
-    roundId: { type: Number, required: true, unique: true },
+    roundId: { type: Number, required: true },
     status: {
       type: String,
       enum: ["open", "closed", "completed"],

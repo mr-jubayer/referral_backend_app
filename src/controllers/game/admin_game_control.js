@@ -2,10 +2,12 @@ import { startGameLoop } from "../../game/game.engine.js";
 import { startGame, stopGame } from "../../game/game.state.js";
 
 let ioInstance = null;
+let connectedUsersInstance = null;
 
-export const initializeGameLoop = (io) => {
+export const initializeGameLoop = (io, connectedUsers) => {
   ioInstance = io;
-  startGameLoop(ioInstance);
+  connectedUsersInstance = connectedUsers;
+  startGameLoop(ioInstance, connectedUsersInstance);
 };
 
 export const stopGameController = (req, res) => {
@@ -15,9 +17,8 @@ export const stopGameController = (req, res) => {
 
 export const startGameController = (req, res) => {
   startGame();
-  // Restart the loop if needed
-  if (ioInstance) {
-    startGameLoop(ioInstance);
+  if (ioInstance && connectedUsersInstance) {
+    startGameLoop(ioInstance, connectedUsersInstance);
   }
   res.json({ message: "Game started" });
 };

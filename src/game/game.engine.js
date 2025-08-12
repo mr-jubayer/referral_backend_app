@@ -1,4 +1,4 @@
-import Bet from "../models/bet.model.js";
+import { Bet } from "../models/bet.model.js";
 import { Round } from "../models/round.model.js";
 import { User } from "../models/user.model.js";
 import {
@@ -7,30 +7,27 @@ import {
   updateDemoBalance,
 } from "./game.state.js";
 
-let roundCounter = 1;
 const MIN_PLAYERS = 3;
+let roundCounter = 1;
 
 let currentRoundTimeout;
 let waitForPlayersInterval;
 
-export function startGameLoop(io) {
-  async function runRound() {
+export async function startGameLoop(io, connectedUsers) {
+  // Initialize roundCounter from DB
+  const lastRound = await Round.findOne().sort({ roundId: -1 });
+  roundCounter = lastRound ? lastRound.roundId + 1 : 1;
+
+  async function runRound(roundId) {
     if (!isGameRunning()) {
       console.log("Game stopped, waiting to restart...");
       return;
     }
 
-    const roundId = roundCounter++;
-    await Round.create({
-      roundId,
-      status: "open",
-      startedAt: new Date(),
-    });
-
     io.emit("roundStart", { roundId });
 
-    const bettingTime = 60 * 1000; // 1 minute total
-    const checkInterval = 2000; // 2 seconds check
+    const bettingTime = 60 * 1000;
+    const checkInterval = 2000;
     let elapsed = 0;
 
     waitForPlayersInterval = setInterval(async () => {
@@ -38,14 +35,16 @@ export function startGameLoop(io) {
         clearInterval(waitForPlayersInterval);
         return;
       }
-      const playerCount = await Bet.countDocuments({ roundId });
 
-      if (playerCount >= MIN_PLAYERS || elapsed >= bettingTime - 5000) {
+      // Count bets this round (for betting players)
+      const playerBetCount = await Bet.countDocuments({ roundId });
+
+      if (elapsed >= bettingTime - 5000) {
         clearInterval(waitForPlayersInterval);
 
-        // Close betting 5 seconds before end
         currentRoundTimeout = setTimeout(async () => {
           if (!isGameRunning()) return;
+
           await Round.updateOne({ roundId }, { status: "closed" });
           io.emit("bettingClosed", { roundId });
 
@@ -62,8 +61,11 @@ export function startGameLoop(io) {
                 { roundId },
                 { status: "cancelled", endedAt: new Date() }
               );
+
+              await Round.deleteOne({ roundId });
+
               await Bet.deleteMany({ roundId });
-              runRound();
+              startWaitingForPlayers();
               return;
             }
 
@@ -97,7 +99,7 @@ export function startGameLoop(io) {
 
               if (bet.type === "real") {
                 user.wallet.mainBalance += payout;
-                user.wallet.totalEarned += payout; // Track earnings
+                user.wallet.totalEarned += payout;
                 await user.save();
               } else {
                 const demoBal = getDemoBalance(user._id.toString());
@@ -116,19 +118,55 @@ export function startGameLoop(io) {
 
             await Bet.deleteMany({ roundId });
 
-            runRound();
+            startWaitingForPlayers();
           }, 5000);
         }, Math.max(0, bettingTime - elapsed - 5000));
       } else {
         elapsed += checkInterval;
         io.emit("waitingForPlayers", {
           roundId,
-          currentPlayers: playerCount,
+          currentPlayers: connectedUsers.size, // <-- Use connected users count here
           minPlayers: MIN_PLAYERS,
         });
       }
     }, checkInterval);
   }
 
-  runRound();
+  function startWaitingForPlayers() {
+    if (!isGameRunning()) {
+      console.log("Game stopped, not waiting for players.");
+      return;
+    }
+
+    const roundId = roundCounter++;
+
+    const waitInterval = setInterval(() => {
+      if (!isGameRunning()) {
+        clearInterval(waitInterval);
+        return;
+      }
+
+      const currentConnected = connectedUsers.size;
+
+      io.emit("waitingForPlayers", {
+        roundId,
+        currentPlayers: currentConnected,
+        minPlayers: MIN_PLAYERS,
+      });
+
+      if (currentConnected >= MIN_PLAYERS) {
+        clearInterval(waitInterval);
+
+        Round.create({
+          roundId,
+          status: "open",
+          startedAt: new Date(),
+        }).then(() => {
+          runRound(roundId);
+        });
+      }
+    }, 2000);
+  }
+
+  startWaitingForPlayers();
 }
