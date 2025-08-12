@@ -1,6 +1,7 @@
 import express from "express";
 import { approveWithdraw } from "../controllers/withdraw/approve_withdraw.js";
 import { withdrawRequest } from "../controllers/withdraw/withdraw_request.js";
+import { withdrawReview } from "../controllers/withdraw/withdraw_review.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import {
   approveWithdrawValidation,
@@ -12,6 +13,7 @@ const router = express.Router();
 router.use(verifyJWT);
 router.route("/request").post(withdrawRequestValidation, withdrawRequest);
 router.route("/approve").patch(approveWithdrawValidation, approveWithdraw);
+router.route("/review").get(withdrawReview);
 
 export default router;
 

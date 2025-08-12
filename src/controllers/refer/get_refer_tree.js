@@ -22,6 +22,14 @@ const buildReferralTree = async (referralCode) => {
 };
 
 const getReferTree = asyncHandler(async (req, res) => {
+  const adminId = req.user._id;
+
+  // Admin only access this route
+  const isAdmin = await User.findById(adminId);
+  if (!isAdmin || isAdmin.role !== "admin") {
+    throw new ApiError(403, "Access denied. Admin only.");
+  }
+
   // Get all root users (those who were not referred by anyone)
   const rootUsers = await User.find(
     { referredBy: null },
