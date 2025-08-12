@@ -20,6 +20,7 @@ import adminRoutes from "./routes/admin.route.js";
 import depositRoute from "./routes/deposit.route.js";
 import gameRoutes from "./routes/game.route.js";
 import healthCheckRouter from "./routes/healthcheck.route.js";
+import referralRoute from "./routes/refer.route.js";
 import userRouter from "./routes/user.route.js";
 import withdrawRoute from "./routes/withdraw.route.js";
 
@@ -30,5 +31,6 @@ app.use("/api/v1/deposit", depositRoute);
 app.use("/api/v1/withdraw", withdrawRoute);
 app.use("/api/v1/game", gameRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/refer", referralRoute);
 
 export { app };
