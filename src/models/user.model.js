@@ -45,8 +45,14 @@ const userSchema = new Schema(
     },
     wallet: {
       mainBalance: { type: Number, default: 0 },
+      referralIncome: { type: Number, default: 0 },
+      demoBalance: { type: Number, default: 500 },
       totalEarned: { type: Number, default: 0 },
       totalWithdrawn: { type: Number, default: 0 },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   {

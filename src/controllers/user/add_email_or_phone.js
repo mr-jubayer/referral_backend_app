@@ -17,6 +17,10 @@ const addEmail = asyncHandler(async (req, res) => {
     }
   });
 
+  if (user.emails?.length > 3) {
+    throw new ApiError(401, "Maximum email added");
+  }
+
   user.emails.push({ email, isVerified: false });
 
   // TODO: verify the email
@@ -37,6 +41,10 @@ const addPhone = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Phone Already exist");
     }
   });
+
+  if (user.phones?.length > 3) {
+    throw new ApiError(401, "Maximum phone number added");
+  }
 
   if (!user) throw new ApiError(404, "User doesn't exist.");
 
