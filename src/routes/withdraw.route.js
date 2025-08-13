@@ -13,7 +13,7 @@ const router = express.Router();
 router.use(verifyJWT);
 router.route("/request").post(withdrawRequestValidation, withdrawRequest);
 router.route("/approve").patch(approveWithdrawValidation, approveWithdraw);
-router.route("/review").get(withdrawReview);
+router.route("/review").get(withdrawReview); // admin only!
 
 export default router;
 

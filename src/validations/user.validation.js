@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const validatePhoneNumber = /^(?:(?:\+|00)88|01)?\d{11}$/;
+const validatePhoneNumber = /^01\d{9}$/;
 
 const createUserValidationSchema = z.object({
   username: z.string({ message: "username is required" }),
@@ -8,7 +8,7 @@ const createUserValidationSchema = z.object({
     .string({ message: "Phone is required" })
     .regex(
       validatePhoneNumber,
-      "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
+      "Invalid phone number format. Expected formats: 01xxxxxxxxx."
     ),
   password: z
     .string()
@@ -22,7 +22,7 @@ const loginUserValidationSchema = z.object({
     .string({ message: "Phone is required" })
     .regex(
       validatePhoneNumber,
-      "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
+      "Invalid phone number format. Expected formats: 01xxxxxxxxx."
     )
     .optional(),
   email: z.string({ message: "User email is required." }).email().optional(),
@@ -90,7 +90,7 @@ const addPhoneSchema = z.object({
     .string({ message: "Phone is required" })
     .regex(
       validatePhoneNumber,
-      "Invalid phone number format. Expected formats: 01xxxxxxxxx, +8801xxxxxxxxx, or 8801xxxxxxxxx."
+      "Invalid phone number format. Expected formats: 01xxxxxxxxx."
     ),
 });
 
