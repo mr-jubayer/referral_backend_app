@@ -25,12 +25,12 @@ import userRouter from "./routes/user.route.js";
 import withdrawRoute from "./routes/withdraw.route.js";
 
 //routes declaration
-app.use("/api/v1/healthCheck", healthCheckRouter);
+app.use("/api/v1/health", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/deposit", depositRoute);
 app.use("/api/v1/withdraw", withdrawRoute);
 app.use("/api/v1/game", gameRoutes);
 app.use("/api/v1/admin", adminRoutes);
-app.use("/api/v1/refer", referralRoute);
+app.use("/api/v1/refer-tree", referralRoute);
 
 export { app };
