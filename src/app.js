@@ -5,7 +5,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", "https://refero-admin-panel.vercel.app"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
   })
@@ -21,6 +21,7 @@ import depositRoute from "./routes/deposit.route.js";
 import gameRoutes from "./routes/game.route.js";
 import healthCheckRouter from "./routes/healthcheck.route.js";
 import referralRoute from "./routes/refer.route.js";
+import statesRoute from "./routes/state.route.js";
 import userRouter from "./routes/user.route.js";
 import withdrawRoute from "./routes/withdraw.route.js";
 
@@ -32,5 +33,6 @@ app.use("/api/v1/withdraw", withdrawRoute);
 app.use("/api/v1/game", gameRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/refer-tree", referralRoute);
+app.use("/api/v1/states", statesRoute);
 
 export { app };

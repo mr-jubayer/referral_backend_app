@@ -1,4 +1,5 @@
-import { Deposit } from "../../models/deposit.model.js";
+import { User } from "../../models/user.model.js";
+import { Withdraw } from "../../models/withdraw.model.js";
 import { ApiResponse } from "../../utils/ApiResponse.js";
 import { asyncHandler } from "../../utils/asyncHandler.js";
 
@@ -11,7 +12,7 @@ const withdrawReview = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Access denied. Admin only.");
   }
 
-  const withdrawn = await Deposit.aggregate([
+  const withdrawn = await Withdraw.aggregate([
     {
       $addFields: {
         sortOrder: {

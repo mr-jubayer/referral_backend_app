@@ -24,6 +24,7 @@ const userSchema = new Schema(
         {
           email: { type: String, lowercase: true, trim: true, required: true },
           isVerified: { type: Boolean, default: false },
+          verificationCode: { type: Number },
         },
       ],
       validate: [arrayLimit, "{PATH} exceeds the limit of 3"],

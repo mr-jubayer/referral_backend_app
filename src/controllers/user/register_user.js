@@ -37,7 +37,11 @@ const registerUser = asyncHandler(async (req, res) => {
     }
   }
 
+  // const verifyCode = Math.floor(100000 + Math.random() * 900000).toString();
   const referralCode = `${username}${Math.round(Math.random() * 80)}`;
+
+  // const expiryDate = new Date();
+  // expiryDate.setHours(expiryDate.getHours() + 1);
 
   const user = await User.create({
     username: username.toLowerCase(),
@@ -48,6 +52,13 @@ const registerUser = asyncHandler(async (req, res) => {
     role: "user",
     referredBy: referredBy || null,
   });
+
+  // send verification email
+  // const emailResponse = await sendVerificationEmail(
+  //   email,
+  //   username,
+  //   verifyCode
+  // );
 
   if (referredBy) {
     await Refer.create({

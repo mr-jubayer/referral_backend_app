@@ -32,17 +32,16 @@ const loginUser = asyncHandler(async (req, res) => {
   let user;
 
   if (email) {
-    user = await User.findOne({
-      emails: { $elemMatch: { email: email } },
-    });
+    user = await User.findOne({ "emails.email": email });
+
     if (!user) throw new ApiError(404, "Email doesn't exist.");
 
     //  check if email not verified
-    user.emails?.forEach((em) => {
-      if (em.email === email && !em.isVerified) {
-        throw new ApiError(404, "Email Not verified. verify it and try again");
-      }
-    });
+    // user.emails?.forEach((em) => {
+    //   if (em.email === email && !em.isVerified) {
+    //     throw new ApiError(404, "Email Not verified. verify it and try again");
+    //   }
+    // });
   } else if (phone) {
     user = await User.findOne({ phones: phone });
     if (!user) throw new ApiError(404, "Phone number doesn't exist.");
